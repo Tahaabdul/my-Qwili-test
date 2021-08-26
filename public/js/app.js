@@ -1,5 +1,6 @@
 const requestForm = document.querySelector(".request form");
 const prodId = requestForm.prodId.value;
+const prodId = requestForm.request.value;
 
 requestForm.addEventListener("submit", (e) => {
   e.preventDefault();
