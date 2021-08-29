@@ -1,14 +1,10 @@
 const requestForm = document.querySelector(".request form");
-const prodId = requestForm.prodId.value;
+const h2 = document.getElementById("new");
 
 requestForm.addEventListener("submit", (e) => {
   e.preventDefault();
+  const search = requestForm.search.value;
+  console.log(search);
 
-  const data = { prodId };
-  axios
-    .post("https://us-central1-qwili-test.cloudfunctions.net/submit", data)
-    .then(console.log(prodId))
-    .catch((error) => {
-      console.log(error);
-    });
+  window.location.href = `https://us-central1-qwili-test.cloudfunctions.net/addMessage?text=${search}`;
 });

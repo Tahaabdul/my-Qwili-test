@@ -1,33 +1,32 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable max-len */
+/* eslint-disable require-jsdoc */
 /* eslint-disable object-curly-spacing */
 /* eslint-disable indent */
-/* eslint-disable require-jsdoc */
 const functions = require("firebase-functions");
-const cors = require("cors");
 const fetch = require("node-fetch");
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-
-exports.submit = functions.https.onRequest((req, res) => {
-  cors(req, res, () => {
-    if (req.method !== "POST") {
-      return;
-    }
-    const id = req.body.id;
-    const url = `https://fakestoreapi.com/produts/${id}`;
-    let prodDetails;
-    async function getProduct() {
-      await fetch(url)
-        .then((res) => res.json())
-        .then((data) => {
-          prodDetails = {
-            id: data.id,
-            title: data.title,
-            desc: data.description,
-            image: data.image,
-          };
-          res.header("Access-Control-Allow-Origin", "*");
-          res.status(200).send(`<!doctype html>
+exports.addMessage = functions.https.onRequest((req, res) => {
+  const id = req.query.text;
+  let prodDetails;
+  async function getProduct() {
+    await fetch(`http://fakestoreapi.com/products/${id}`, {
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        prodDetails = {
+          id: data.id,
+          title: data.title,
+          desc: data.description,
+          image: data.image,
+        };
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(200).send(`<!doctype html>
   <head>
     <title>Product</title>
   </head>
@@ -38,11 +37,10 @@ exports.submit = functions.https.onRequest((req, res) => {
     <img src="${prodDetails.image}" width="200" height="90"/>
   </body>
 </html>`);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-    getProduct();
-  });
+      })
+      .catch((error) => {
+        res.send(error);
+      });
+  }
+  getProduct();
 });
